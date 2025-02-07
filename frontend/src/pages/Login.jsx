@@ -19,10 +19,14 @@ const Login = () => {
           password,
         }
       );
+
+      console.log("Login successful. Token:", data.token); // Debugging
+      localStorage.setItem("token", data.token); // ✅ Store token
       login(data.token);
       navigate("/");
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login failed:", error.response?.data || error);
+      alert(error.response?.data?.error || "Login failed!");
     }
   };
 

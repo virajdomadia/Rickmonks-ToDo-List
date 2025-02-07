@@ -37,6 +37,7 @@ const Dashboard = () => {
         console.error("Invalid todos format:", res.data);
         setTodos([]); // Fallback to empty array
       }
+      console.log("User from AuthContext:", user);
     } catch (error) {
       console.error("Error fetching todos:", error);
       setTodos([]); // Fallback to empty array in case of API failure
@@ -88,7 +89,7 @@ const Dashboard = () => {
       <Navbar />
       <div className="max-w-3xl mx-auto p-6">
         <h1 className="text-3xl font-bold text-center text-gray-800">
-          Welcome, {user?.username}!
+          Welcome to My TO-DO LIST APP!
         </h1>
 
         {/* Add To-Do */}
