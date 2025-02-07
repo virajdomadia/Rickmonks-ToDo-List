@@ -1,0 +1,37 @@
+import axios from "axios";
+
+const API = "http://localhost:5000/api/todos";
+
+export const getTodos = async (token, params) =>
+  await axios.get(API, {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+  });
+
+export const createTodo = async (token, task) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/todos",
+      { task }, // ✅ Ensure task is sent correctly
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateTodo = async (token, id, updatedTask) =>
+  await axios.put(`${API}/${id}`, updatedTask, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const deleteTodo = async (token, id) =>
+  await axios.delete(`${API}/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

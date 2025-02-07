@@ -1,15 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 const cors = require("cors");
+const dotenv = require("dotenv");
 
-const todo = require("./routes/todoRoutes");
+const auth = require("./routes/auth");
+const todo = require("./routes/todo");
 
 const app = express();
-dotenv.config();
-
-app.use(cors());
 app.use(express.json());
+app.use(cors());
+dotenv.config();
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -20,9 +20,7 @@ mongoose
     console.log("Error connecting to MongoDB");
   });
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+app.use("/api/auth", auth);
 app.use("/api/todos", todo);
 
 const PORT = process.env.PORT;
