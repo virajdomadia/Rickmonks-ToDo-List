@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     const newTodo = new Todo({ taskName });
     await newTodo.save();
 
-    res.status(201).json(newTodo); // ✅ Respond with the created todo
+    res.status(201).json(newTodo);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to create todo" });
