@@ -63,12 +63,22 @@ const Dashboard = () => {
 
   const handleUpdate = async (id, updatedTask, completed) => {
     try {
-      await updateTodo(localStorage.getItem("token"), id, {
-        task: updatedTask,
-        completed,
-      });
+      const token = localStorage.getItem("token");
 
-      setEditing(null);
+      const updateData = updatedTask
+        ? { task: updatedTask, completed }
+        : { completed };
+
+      console.log("Updating Task:", id, updateData);
+
+      await updateTodo(token, id, updateData);
+
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) =>
+          todo._id === id ? { ...todo, completed } : todo
+        )
+      );
+
       fetchTodos();
     } catch (error) {
       console.error("Error updating todo:", error);
