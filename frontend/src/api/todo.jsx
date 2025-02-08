@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/todos";
+// const API = "http://localhost:5000/api/todos";
+const API = "https://richmonks-to-do-list-backend.onrender.com/api/todos";
 
 export const getTodos = async (token, params) =>
   await axios.get(API, {
@@ -11,7 +12,7 @@ export const getTodos = async (token, params) =>
 export const createTodo = async (token, task) => {
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/todos",
+      "https://richmonks-to-do-list-backend.onrender.com/api/todos",
       { task },
       {
         headers: {
