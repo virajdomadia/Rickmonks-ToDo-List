@@ -3,6 +3,7 @@ const Todo = require("../models/Todo");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
+// ✅ Create a new task
 router.post("/", authMiddleware, async (req, res) => {
   console.log("Received request body:", req.body);
 
@@ -17,6 +18,7 @@ router.post("/", authMiddleware, async (req, res) => {
     const newTodo = new Todo({
       task,
       userId: req.user.id,
+      completed: false, // Fix: Ensure default value
     });
 
     await newTodo.save();
@@ -27,12 +29,15 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Get all tasks (with search, filter, and pagination)
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const { search = "", completed, page = 1, limit = 5 } = req.query;
+
     const query = { userId: req.user.id };
     if (search) query.task = new RegExp(search, "i");
-    if (completed !== undefined) query.completed = completed === "true";
+    if (completed !== undefined && completed !== "")
+      query.completed = completed === "true"; // Fix: Convert completed to boolean
 
     const totalTodos = await Todo.countDocuments(query);
     const todos = await Todo.find(query)
@@ -47,6 +52,7 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Update a task (task name or completion status)
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { task, completed } = req.body;
@@ -61,6 +67,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 
     const updatedTodo = await Todo.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.id },
+      { $set: { task, completed } }, // Fix: Explicitly update fields
       { new: true }
     );
 
@@ -73,6 +80,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Delete a task
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const deletedTodo = await Todo.findOneAndDelete({

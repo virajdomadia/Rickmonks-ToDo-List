@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [editText, setEditText] = useState("");
 
   useEffect(() => {
     if (user) fetchTodos();
@@ -28,16 +29,12 @@ const Dashboard = () => {
         page,
       });
 
-      console.log("Fetched Todos:", res.data);
-
       if (res.data?.todos) {
         setTodos(res.data.todos);
         setTotalPages(res.data.totalPages);
       } else {
-        console.error("Invalid todos format:", res.data);
         setTodos([]);
       }
-      console.log("User from AuthContext:", user);
     } catch (error) {
       console.error("Error fetching todos:", error);
       setTodos([]);
@@ -49,10 +46,12 @@ const Dashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Sending Task:", task);
-
       const response = await createTodo(token, task);
-      console.log("Create Todo Response:", response);
+
+      if (response.data) {
+        setTodos((prev) => [...prev, response.data]); // Optimistic UI update
+      }
+
       setTask("");
       fetchTodos();
     } catch (error) {
@@ -62,33 +61,45 @@ const Dashboard = () => {
   };
 
   const handleUpdate = async (id, updatedTask, completed) => {
+    if (!updatedTask.trim()) return alert("Task cannot be empty!");
+
     try {
       const token = localStorage.getItem("token");
 
-      const updateData = updatedTask
-        ? { task: updatedTask, completed }
-        : { completed };
+      // Send update request
+      const response = await updateTodo(token, id, {
+        task: updatedTask,
+        completed,
+      });
 
-      console.log("Updating Task:", id, updateData);
-
-      await updateTodo(token, id, updateData);
-
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo._id === id ? { ...todo, completed } : todo
-        )
-      );
-
-      fetchTodos();
+      if (response.data) {
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo._id === id
+              ? {
+                  ...todo,
+                  task: response.data.task,
+                  completed: response.data.completed,
+                }
+              : todo
+          )
+        );
+        setEditing(null);
+        setEditText(""); // Reset text state after editing
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (error) {
       console.error("Error updating todo:", error);
+      alert("Failed to update task!");
+      fetchTodos();
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await deleteTodo(localStorage.getItem("token"), id);
-      fetchTodos();
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo._id !== id));
     } catch (error) {
       console.error("Error deleting todo:", error);
     }
@@ -138,7 +149,7 @@ const Dashboard = () => {
         </div>
 
         <ul className="mt-6 space-y-4">
-          {Array.isArray(todos) && todos.length > 0 ? (
+          {todos.length > 0 ? (
             todos.map((todo) => (
               <li
                 key={todo._id}
@@ -148,9 +159,10 @@ const Dashboard = () => {
                   <input
                     type="text"
                     className="border p-2 rounded-lg w-full"
-                    defaultValue={todo.task}
-                    onBlur={(e) =>
-                      handleUpdate(todo._id, e.target.value, todo.completed)
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    onBlur={() =>
+                      handleUpdate(todo._id, editText, todo.completed)
                     }
                     autoFocus
                   />
@@ -178,7 +190,7 @@ const Dashboard = () => {
                       handleUpdate(todo._id, todo.task, !todo.completed)
                     }
                   >
-                    ✅
+                    {todo.completed ? "❌" : "✅"}
                   </button>
                   <button
                     className="text-red-500 hover:text-red-600"
