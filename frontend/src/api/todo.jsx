@@ -12,7 +12,7 @@ export const createTodo = async (token, task) => {
   try {
     const response = await axios.post(
       "http://localhost:5000/api/todos",
-      { task }, // ✅ Ensure task is sent correctly
+      { task },
       {
         headers: {
           "Content-Type": "application/json",

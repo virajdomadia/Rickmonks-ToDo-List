@@ -20,8 +20,8 @@ const Login = () => {
         }
       );
 
-      console.log("Login successful. Token:", data.token); // Debugging
-      localStorage.setItem("token", data.token); // ✅ Store token
+      console.log("Login successful. Token:", data.token);
+      localStorage.setItem("token", data.token);
       login(data.token);
       navigate("/");
     } catch (error) {

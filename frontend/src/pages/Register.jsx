@@ -26,8 +26,8 @@ const Register = () => {
         "http://localhost:5000/api/auth/register",
         formData
       );
-      alert(res.data.message); // Show success message
-      navigate("/login"); // Redirect to login page
+      alert(res.data.message);
+      navigate("/login");
     } catch (err) {
       setError("Error Registering User. Try again!");
       console.log(err);

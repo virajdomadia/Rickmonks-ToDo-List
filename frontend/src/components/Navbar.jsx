@@ -8,12 +8,10 @@ const Navbar = () => {
   return (
     <nav className="bg-blue-600 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
         <Link to="/" className="text-2xl font-bold">
           ✅ To-Do App
         </Link>
 
-        {/* Auth Buttons */}
         <div>
           {user ? (
             <button

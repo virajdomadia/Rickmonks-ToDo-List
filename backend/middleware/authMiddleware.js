@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+const jwt = require ("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
   const token = req.header("Authorization");
@@ -13,13 +13,13 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const verified = jwt.verify(tokenParts[1], process.env.JWT_SECRET);
-    console.log("Decoded token:", verified); // ✅ Debugging
+    console.log("Decoded token:", verified);
 
     if (!verified.userId) {
       return res.status(401).json({ message: "Invalid token payload" });
     }
 
-    req.user = { id: verified.userId }; // ✅ Corrected field
+    req.user = { id: verified.userId };
     next();
   } catch (error) {
     return res.status(400).json({ message: "Invalid Token" });

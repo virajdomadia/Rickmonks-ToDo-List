@@ -3,9 +3,8 @@ const Todo = require("../models/Todo");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-// ✅ Create a new todo
 router.post("/", authMiddleware, async (req, res) => {
-  console.log("Received request body:", req.body); // Debug log
+  console.log("Received request body:", req.body);
 
   const { task } = req.body;
   if (!task || typeof task !== "string") {
@@ -17,7 +16,7 @@ router.post("/", authMiddleware, async (req, res) => {
   try {
     const newTodo = new Todo({
       task,
-      userId: req.user.id, // ✅ Correct field name
+      userId: req.user.id,
     });
 
     await newTodo.save();
@@ -28,12 +27,10 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Get todos with filtering, search, and pagination
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const { search = "", completed, page = 1, limit = 5 } = req.query;
-    const query = { userId: req.user.id }; // ✅ Correct field name
-
+    const query = { userId: req.user.id };
     if (search) query.task = new RegExp(search, "i");
     if (completed !== undefined) query.completed = completed === "true";
 
@@ -50,7 +47,6 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Update a todo
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { task, completed } = req.body;
@@ -64,8 +60,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
 
     const updatedTodo = await Todo.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.id }, // ✅ Use 'userId'
-      { $set: req.body },
+      { _id: req.params.id, userId: req.user.id },
       { new: true }
     );
 
@@ -78,12 +73,11 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Delete a todo
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const deletedTodo = await Todo.findOneAndDelete({
       _id: req.params.id,
-      userId: req.user.id, // ✅ Use 'userId'
+      userId: req.user.id,
     });
 
     if (!deletedTodo) return res.status(404).json({ error: "Todo not found" });

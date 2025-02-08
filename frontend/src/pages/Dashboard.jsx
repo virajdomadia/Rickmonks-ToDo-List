@@ -23,24 +23,24 @@ const Dashboard = () => {
         filter === "all" ? undefined : filter === "completed" ? true : false;
 
       const res = await getTodos(localStorage.getItem("token"), {
-        completed, // ✅ Send correct filter field
+        completed,
         search,
         page,
       });
 
-      console.log("Fetched Todos:", res.data); // Debugging
+      console.log("Fetched Todos:", res.data);
 
       if (res.data?.todos) {
         setTodos(res.data.todos);
         setTotalPages(res.data.totalPages);
       } else {
         console.error("Invalid todos format:", res.data);
-        setTodos([]); // Fallback to empty array
+        setTodos([]);
       }
       console.log("User from AuthContext:", user);
     } catch (error) {
       console.error("Error fetching todos:", error);
-      setTodos([]); // Fallback to empty array in case of API failure
+      setTodos([]);
     }
   };
 
@@ -49,10 +49,10 @@ const Dashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Sending Task:", task); // Debugging
+      console.log("Sending Task:", task);
 
-      const response = await createTodo(token, task); // ✅ Pass task directly (string)
-      console.log("Create Todo Response:", response); // Debugging
+      const response = await createTodo(token, task);
+      console.log("Create Todo Response:", response);
       setTask("");
       fetchTodos();
     } catch (error) {
@@ -65,7 +65,7 @@ const Dashboard = () => {
     try {
       await updateTodo(localStorage.getItem("token"), id, {
         task: updatedTask,
-        completed, // ✅ Ensure boolean conversion
+        completed,
       });
 
       setEditing(null);
@@ -92,7 +92,6 @@ const Dashboard = () => {
           Welcome to My TO-DO LIST APP!
         </h1>
 
-        {/* Add To-Do */}
         <div className="mt-6 flex bg-white shadow-lg rounded-lg p-4">
           <input
             type="text"
@@ -109,7 +108,6 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Search & Filter */}
         <div className="mt-6 flex gap-4">
           <input
             type="text"
@@ -129,7 +127,6 @@ const Dashboard = () => {
           </select>
         </div>
 
-        {/* To-Do List */}
         <ul className="mt-6 space-y-4">
           {Array.isArray(todos) && todos.length > 0 ? (
             todos.map((todo) => (
@@ -187,7 +184,6 @@ const Dashboard = () => {
           )}
         </ul>
 
-        {/* Pagination */}
         <div className="mt-6 flex justify-center gap-4">
           <button
             disabled={page === 1}
