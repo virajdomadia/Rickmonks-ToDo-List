@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "../api/todo";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
